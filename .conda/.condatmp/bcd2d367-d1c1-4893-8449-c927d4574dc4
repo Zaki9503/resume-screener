@@ -1,0 +1,13 @@
+prefix=z:/Zaki/resume-screener/.conda/Library
+exec_prefix=z:/Zaki/resume-screener/.conda/Library
+libdir=z:/Zaki/resume-screener/.conda/Library/lib
+sharedlibdir=z:/Zaki/resume-screener/.conda/Library/lib
+includedir=z:/Zaki/resume-screener/.conda/Library/include
+
+Name: zlib
+Description: zlib compression library
+Version: 1.3.1
+
+Requires:
+Libs: -L${libdir} -L${sharedlibdir} -lz
+Cflags: -I${includedir}
