@@ -30,14 +30,17 @@ def main():
 
         for file in resume_files:
             resume_text = extract_text_from_pdf(file)
+            #st.write(file.name)
+            #st.write(resume_text[:2000])
             resume_skills = extract_skills(resume_text, skills_db)
 
             skill_score = score_resume(resume_skills, jd_skills)
             ai_score = semantic_score(resume_text, jd_text)
 
-            score = int((skill_score * 0.6) + (ai_score * 0.4))
+            raw = (skill_score * 0.7) + (ai_score * 0.3)
+            score = min(100, int(raw * 1.08))
             score = apply_dynamic_rules(score, resume_skills, jd_skills)
-            missing = list(set(jd_skills) - set(resume_skills))
+            missing = sorted(list(set(jd_skills) - set(resume_skills)))
             results.append({
                 "name": file.name,
                 "score": score,
@@ -89,7 +92,7 @@ def main():
 
             st.progress(candidate["score"] / 100)
 
-            with st.expander("View Skill Details"):
+            with st.expander(f"View Skill Details - {candidate['name']}"):
                 st.markdown("### Detected Skills")
                 if candidate["skills"]:
                     st.markdown(" • " + "\n • ".join(candidate["skills"]))
