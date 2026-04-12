@@ -1,0 +1,54 @@
+.main {
+    padding-top: 1rem;
+}
+
+/* KPI cards */
+.metric-card {
+    background: #0f172a;
+    padding: 18px;
+    border-radius: 14px;
+    text-align: center;
+    color: white;
+    border: 1px solid #1e293b;
+    margin-bottom: 12px;
+}
+
+/* Candidate cards */
+.rank-card {
+    background: #111827;
+    padding: 12px 16px;
+    border-radius: 14px;
+    margin-bottom: 14px;
+    border: 1px solid #1f2937;
+    color: white;
+}
+
+/* Candidate headings */
+.rank-card h4 {
+    color: white;
+    margin-bottom: 8px;
+    font-size: 18px;
+}
+
+/* Candidate text */
+.rank-card p {
+    color: #d1d5db;
+    margin: 2px 0;
+    font-size: 16px;
+}
+
+/* Status colors */
+.green {
+    color: #16a34a;
+    font-weight: bold;
+}
+
+.orange {
+    color: #ea580c;
+    font-weight: bold;
+}
+
+.red {
+    color: #dc2626;
+    font-weight: bold;
+}
