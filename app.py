@@ -1,8 +1,9 @@
 import streamlit as st
 import pdfplumber
 import PyPDF2
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
+from sentence_transformers import SentenceTransformer, util
+
+model = SentenceTransformer('all-MiniLM-L6-v2')
 
 skills_db = [
     "python","java","c++","sql","machine learning","deep learning",
@@ -47,6 +48,17 @@ def score_resume(resume_skills, jd_skills):
 
     return int((matched / total) * 100)
 
+def semantic_score(resume_text, jd_text):
+    emb1 = model.encode(resume_text, convert_to_tensor=True)
+    emb2 = model.encode(jd_text, convert_to_tensor=True)
+
+    score = util.cos_sim(emb1, emb2).item()
+
+    if score < 0:
+        score = 0
+
+    return int(score * 100)
+
 st.set_page_config(page_title="AI Resume Screener", page_icon="📄", layout="wide")
 
 st.title("📄 AI Resume Screener")
@@ -70,12 +82,17 @@ if resume_files and jd:
         resume_text = extract_text_from_pdf(file)
         resume_skills = extract_skills(resume_text)
 
-        score = score_resume(resume_skills, jd_skills)
-        missing = list(set(jd_skills) - set(resume_skills))
+        skill_score = score_resume(resume_skills, jd_skills)
+        ai_score = semantic_score(resume_text, jd_text)
 
+        score = int((skill_score * 0.6) + (ai_score * 0.4))
+
+        missing = list(set(jd_skills) - set(resume_skills))
         results.append({
             "name": file.name,
             "score": score,
+            "skill_score": skill_score,
+            "ai_score": ai_score,
             "skills": resume_skills,
             "missing": missing
         })
@@ -87,7 +104,7 @@ if resume_files and jd:
     for i, candidate in enumerate(results, start=1):
         st.markdown(f"### {i}. {candidate['name']}")
         st.progress(candidate["score"] / 100)
-        st.write(f"Score: {candidate['score']}%")
-        st.write("Detected Skills:", candidate["skills"])
+        st.write(f"Final Score: {candidate['score']}%")
+        st.write(f"Skill Match: {candidate['skill_score']}% | AI Semantic: {candidate['ai_score']}%")
         st.write("Missing Skills:", candidate["missing"])
         st.divider()
